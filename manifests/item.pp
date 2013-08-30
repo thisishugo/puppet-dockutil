@@ -5,11 +5,16 @@ define dockutil::item (
   $position = "unset",
 )
 {
-  require dockutil
-
   validate_re($action, '^(add|remove)$',
   "${action} is not supported for action.
   Allowed values are 'add' and 'remove'.")
+
+  include ::dockutil
+  include ::dockutil::reload
+
+  Class['Dockutil'] ->
+    Dockutil::Item[$name] ~>
+    Class['Dockutil::Reload']
 
   case $action {
     "add":{
@@ -33,17 +38,6 @@ define dockutil::item (
       }
     }
 
-  }
-
-  exec {"kill dock $label":
-    command     =>  "killall Dock; sleep 3",
-    notify      => Exec["sleep ${label}"],
-    refreshonly => true,
-  }
-
-  exec {"sleep $label":
-    command     => "sleep 1",
-    refreshonly => true,
   }
 
 }

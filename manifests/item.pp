@@ -2,7 +2,9 @@
 define dockutil::item (
   $ensure,
   $item,
-  $position = 'unset',
+  $pos_before = undef,
+  $pos_after = undef,
+  $pos_value = undef,
 ) {
   validate_re($ensure, '^(present|absent)$',
     "${ensure} is not supported for ensure.
@@ -18,12 +20,23 @@ define dockutil::item (
 
   case $ensure {
     'present': {
-      $run = $position ? {
-        'unset' => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' --no-restart",
-        default => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' --position ${position} --no-restart",
+      $before = $pos_before ? {
+        undef   => '',
+        default => "--before ${pos_before}",
       }
-      exec {"dockutil-add-${name}":
-        command => $run,
+
+      $after = $pos_after ? {
+        undef   => '',
+        default => "--after ${pos_after}",
+      }
+
+      $position = $pos_value ? {
+        undef   => '',
+        default => "--position ${pos_value}",
+      }
+
+      exec { "dockutil-add-${name}":
+        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' ${position} ${after} ${before} --no-restart",
         onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find '${name}' | grep -qx '${name} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist'";
       }
     }

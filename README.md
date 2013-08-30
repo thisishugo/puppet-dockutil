@@ -44,7 +44,7 @@ This module allows you to mange your dock using Kyle Crawford's awesome [dockuti
 ## Required Puppet Modules
 
 * `boxen`
-# `repository`
+* `repository`
 
 ## Development
 

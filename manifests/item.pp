@@ -2,7 +2,6 @@
 define dockutil::item (
   $ensure,
   $item,
-  $label,
   $position = 'unset',
 ) {
   validate_re($ensure, '^(present|absent)$',
@@ -20,19 +19,19 @@ define dockutil::item (
   case $ensure {
     'present': {
       $run = $position ? {
-        'unset' => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${label}\" --no-restart",
-        default => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${label}\" --position ${position} --no-restart",
+        'unset' => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${name}\" --no-restart",
+        default => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${name}\" --position ${position} --no-restart",
       }
-      exec {"dockutil-add-${label}":
+      exec {"dockutil-add-${name}":
         command => $run,
-        onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${label}\" | grep -qx \"${label} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist\"";
+        onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${name}\" | grep -qx \"${name} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist\"";
       }
     }
 
     'absent':{
-      exec {"dockutil-remove-${label}":
-        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --remove \"${label}\" --no-restart",
-        onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${label}\" | grep -q \"${label} was found\"";
+      exec {"dockutil-remove-${name}":
+        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --remove \"${name}\" --no-restart",
+        onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${name}\" | grep -q \"${name} was found\"";
       }
     }
   }

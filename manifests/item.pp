@@ -30,17 +30,17 @@ define dockutil::item (
     'present': {
       $before = $pos_before ? {
         undef   => '',
-        default => "--before ${pos_before}",
+        default => "--before '${pos_before}'",
       }
 
       $after = $pos_after ? {
         undef   => '',
-        default => "--after ${pos_after}",
+        default => "--after '${pos_after}'",
       }
 
       $position = $pos_value ? {
         undef   => '',
-        default => "--position ${pos_value}",
+        default => "--position '${pos_value}'",
       }
 
       exec { "dockutil-add-${name}":

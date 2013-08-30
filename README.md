@@ -1,7 +1,5 @@
 # Puppet-Dockutil Module for Boxen
 
-[![Build Status](https://travis-ci.org/boxen/puppet-dockutil.png?branch=master)](https://travis-ci.org/boxen/puppet-dockutil)
-
 This module allows you to mange your dock using Kyle Crawford’s awesome dockutil.
 
 ## Usage
@@ -9,7 +7,7 @@ This module allows you to mange your dock using Kyle Crawford’s awesome dockut
 ```puppet
 dockutil::item { 'Add iTerm':
 		item 	 => "/Applications/iTerm.app",
-		label	 => "iTerm",
+		label	     => "iTerm",
 		action 	 => "add",
 		position => 2,
 	}

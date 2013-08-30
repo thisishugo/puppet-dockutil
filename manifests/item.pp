@@ -1,13 +1,14 @@
 # Add item to OSX dock
 define dockutil::item (
+  $ensure,
   $item,
   $label,
-  $action = 'add',
   $position = 'unset',
 ) {
-  validate_re($action, '^(add|remove)$',
-  "${action} is not supported for action.
-  Allowed values are 'add' and 'remove'.")
+  validate_re($ensure, '^(present|absent)$',
+    "${ensure} is not supported for ensure.
+    Allowed values are 'present' and 'absent'."
+  )
 
   include ::dockutil
   include ::dockutil::reload
@@ -16,20 +17,20 @@ define dockutil::item (
     Dockutil::Item[$name] ~>
     Class['Dockutil::Reload']
 
-  case $action {
-    'add':{
+  case $ensure {
+    'present': {
       $run = $position ? {
-        'unset' => "${boxen::config::cachedir}/dockutil/scripts/dockutil --${action} \"${item}\" --label \"${label}\" --no-restart",
-        default => "${boxen::config::cachedir}/dockutil/scripts/dockutil --${action} \"${item}\" --label \"${label}\" --position ${position} --no-restart",
+        'unset' => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${label}\" --no-restart",
+        default => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add \"${item}\" --label \"${label}\" --position ${position} --no-restart",
       }
-      exec {"dockutil-${action}-${label}-add":
+      exec {"dockutil-add-${label}":
         command => $run,
         onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${label}\" | grep -qx \"${label} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist\"";
       }
     }
 
-    'remove':{
-      exec {"dockutil-${label}-${item}":
+    'absent':{
+      exec {"dockutil-remove-${label}":
         command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --remove \"${label}\" --no-restart",
         onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find \"${label}\" | grep -q \"${label} was found\"";
       }

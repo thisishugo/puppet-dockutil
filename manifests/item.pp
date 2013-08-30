@@ -18,6 +18,14 @@ define dockutil::item (
     Dockutil::Item[$name] ~>
     Class['Dockutil::Reload']
 
+  if ($pos_before != undef) {
+    Dockutil::Item[$pos_before] -> Dockutil::Item[$name]
+  }
+
+  if ($pos_after != undef) {
+    Dockutil::Item[$pos_after] -> Dockutil::Item[$name]
+  }
+
   case $ensure {
     'present': {
       $before = $pos_before ? {

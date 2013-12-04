@@ -31,12 +31,12 @@ define dockutil::item (
 
   case $ensure {
     'present': {
-     $display = $folder_display? {
+     $display = $folder_display ? {
         undef   => '',
         default => "--display '${folder_display}'",
       } 
 
-      $view = $folder_view? {
+      $view = $folder_view ? {
         undef   => '',
         default => "--view '${folder_view}'",
       }

@@ -4,6 +4,7 @@ define dockutil::item (
   $item,
   $folder_display = undef,
   $folder_view = undef,
+  $folder_sort = undef,
   $pos_before = undef,
   $pos_after = undef,
   $pos_value = undef,
@@ -40,6 +41,11 @@ define dockutil::item (
         default => "--view '${folder_view}'",
       }
 
+      $sort = $folder_sort ? {
+        undef   => '',
+        default => "--sort '${folder_sort}'"
+      }
+
       $before = $pos_before ? {
         undef   => '',
         default => "--before '${pos_before}'",
@@ -56,7 +62,7 @@ define dockutil::item (
       }
 
       exec { "dockutil-add-${name}":
-        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' ${position} ${after} ${before} ${view} ${display}  --no-restart",
+        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' ${position} ${after} ${before} ${view} ${display} ${sort}  --no-restart",
         onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find '${name}' | grep -qx '${name} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist'";
       }
     }

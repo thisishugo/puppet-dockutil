@@ -2,6 +2,8 @@
 define dockutil::item (
   $ensure,
   $item,
+  $folder_display = undef,
+  $folder_view = undef,
   $pos_before = undef,
   $pos_after = undef,
   $pos_value = undef,
@@ -28,11 +30,21 @@ define dockutil::item (
 
   case $ensure {
     'present': {
+     $display = $folder_display? {
+        undef   => '',
+        default => "--display '${folder_display}'",
+      } 
+
+      $view = $folder_view? {
+        undef   => '',
+        default => "--view '${folder_view}'",
+      }
+
       $before = $pos_before ? {
         undef   => '',
         default => "--before '${pos_before}'",
       }
-
+      
       $after = $pos_after ? {
         undef   => '',
         default => "--after '${pos_after}'",
@@ -44,7 +56,7 @@ define dockutil::item (
       }
 
       exec { "dockutil-add-${name}":
-        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' ${position} ${after} ${before} --no-restart",
+        command => "${boxen::config::cachedir}/dockutil/scripts/dockutil --add '${item}' --label '${name}' ${position} ${after} ${before} ${view} ${display}  --no-restart",
         onlyif  => "${boxen::config::cachedir}/dockutil/scripts/dockutil --find '${name}' | grep -qx '${name} was not found in /Users/${::luser}/Library/Preferences/com.apple.dock.plist'";
       }
     }
